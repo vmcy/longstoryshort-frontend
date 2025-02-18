@@ -3,7 +3,7 @@ import { ref, watch } from 'vue'
 
 const inputUrl = ref('')
 const errorMessage = ref('')
-const resultMessage = ref('Your shortened URL will appear here...')
+const resultMessage = ref('')
 
 // Watch the input and update error message immediately
 watch(inputUrl, (newVal) => {
@@ -29,7 +29,7 @@ function submitForm() {
   const trimmedUrl = inputUrl.value.trim()
   if (!trimmedUrl || !isValidURL(trimmedUrl)) {
     errorMessage.value = 'Please enter a valid URL.'
-    resultMessage.value = 'Your shortened URL will appear here...'
+    resultMessage.value = ''
   } else {
     errorMessage.value = ''
     resultMessage.value = 'Shortened URL: https://short.url/abcd1234'
@@ -53,7 +53,7 @@ function submitForm() {
       </div>
       <button type="submit">Shorten URL</button>
     </form>
-    <div class="result-box">
+    <div v-if="resultMessage" class="result-box">
       {{ resultMessage }}
     </div>
   </div>
@@ -75,6 +75,7 @@ div {
 /* Container styling */
 .container {
   max-width: 400px;
+  min-width: 400px;
   width: 100%;
   padding: 20px;
 }
@@ -153,5 +154,6 @@ button:hover {
   border-radius: 5px;
   margin-top: 20px;
   text-align: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 </style>
