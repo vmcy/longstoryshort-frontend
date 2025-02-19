@@ -4,12 +4,14 @@ import { ref, watch } from 'vue'
 const inputUrl = ref('')
 const errorMessage = ref('')
 const resultMessage = ref('')
+const toastMessage = ref('')
 
 // Watch the input and update error message immediately
 watch(inputUrl, (newVal) => {
   const trimmedVal = newVal.trim()
   if (trimmedVal !== '' && !isValidURL(trimmedVal)) {
-    errorMessage.value = 'Please enter a valid URL.'
+    errorMessage.value = 'Please enter a valid URL'
+    resultMessage.value = ''
   } else {
     errorMessage.value = ''
   }
@@ -28,11 +30,24 @@ function isValidURL(url) {
 function submitForm() {
   const trimmedUrl = inputUrl.value.trim()
   if (!trimmedUrl || !isValidURL(trimmedUrl)) {
-    errorMessage.value = 'Please enter a valid URL.'
+    errorMessage.value = 'Please enter a valid URL'
     resultMessage.value = ''
   } else {
     errorMessage.value = ''
     resultMessage.value = 'Shortened URL: https://short.url/abcd1234'
+  }
+}
+
+async function copyToClipboard() {
+  if (!resultMessage.value) return
+  try {
+    await navigator.clipboard.writeText(resultMessage.value)
+    toastMessage.value = 'Copied to clipboard!'
+    setTimeout(() => {
+      toastMessage.value = ''
+    }, 3000)
+  } catch (err) {
+    console.error('Failed to copy:', err)
   }
 }
 </script>
@@ -51,10 +66,21 @@ function submitForm() {
       <div class="error-label" :class="{ 'error-active': errorMessage }">
         {{ errorMessage }}
       </div>
-      <button type="submit">Shorten URL</button>
+      <button class="submit-button" type="submit">Shorten URL</button>
     </form>
-    <div v-if="resultMessage" class="result-box">
+    <div class="result-box" :class="{ 'result-active': resultMessage }">
       {{ resultMessage }}
+    </div>
+    <button
+      type="button"
+      class="copy-button"
+      :class="{ 'result-active': resultMessage }"
+      @click="copyToClipboard"
+    >
+      click here to copy the short url
+    </button>
+    <div class="toast" v-if="toastMessage">
+      {{ toastMessage }}
     </div>
   </div>
 </template>
@@ -126,8 +152,8 @@ input:focus {
   border-radius: 5px;
 }
 
-/* Button styling */
-button {
+/* Submit button styling */
+.submit-button {
   width: 50%;
   display: block;
   margin: 0 auto;
@@ -141,19 +167,56 @@ button {
   font-weight: bold;
 }
 
-button:hover {
+.submit-button:hover {
   background-color: #2980b9;
 }
 
-/* Result box styling */
+/* Base result box styling */
 .result-box {
-  padding: 15px;
+  min-height: 60px;
+  margin-top: 20px;
+  text-align: center;
   font-size: 16px;
   background-color: #ffffff;
   color: #333333;
+  padding: 15px;
   border-radius: 5px;
-  margin-top: 20px;
-  text-align: center;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  visibility: hidden;
+}
+
+/* Copy button styling */
+.copy-button {
+  background: none;
+  border: none;
+  color: #000000;
+  text-decoration: underline;
+  padding: 0;
+  margin: 6px auto 0;
+  display: block;
+  cursor: pointer;
+  font-size: 12px;
+  visibility: hidden;
+}
+
+/* Only when result is active, show result box and copy button styles */
+.result-box.result-active,
+.copy-button.result-active {
+  visibility: visible;
+}
+
+/* Toast message styling */
+.toast {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: rgba(0, 0, 0, 0.8);
+  color: #ffffff;
+  padding: 10px 20px;
+  border-radius: 5px;
+  font-size: 14px;
+  z-index: 1000;
+  opacity: 0.9;
 }
 </style>
