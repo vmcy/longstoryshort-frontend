@@ -94,7 +94,7 @@ async function copyToClipboard() {
     <form @submit.prevent="submitForm">
       <input
         v-model="inputUrl"
-        type="text"
+        type="url"
         id="textbox"
         name="textbox"
         placeholder="Paste your URL here..."
