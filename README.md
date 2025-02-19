@@ -1,14 +1,13 @@
-# longstoryshort-frontend
+# Long Story Short
+Long Story Short is a simple and minimalist URL shortener.
 
-This template should help get you started developing with Vue 3 in Vite.
+## About
+- Production link: https://lss99.org
+- Built with Vue 3 | Single Page Application (SPA) | Javascript | Composition API
+- Hosted as static website in AWS S3, distributed via AWS Cloudfront CDN with custom domain
 
-## Recommended IDE Setup
+<img width="800" alt="Screenshot 2025-02-20 at 1 03 26 AM" src="https://github.com/user-attachments/assets/bf8c6687-9630-42c0-8e3c-f8fa8c1d7171" />
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
-
-## Customize configuration
-
-See [Vite Configuration Reference](https://vite.dev/config/).
 
 ## Project Setup
 
@@ -28,8 +27,9 @@ npm run dev
 npm run build
 ```
 
-### Lint with [ESLint](https://eslint.org/)
+## Architecture Diagram
+![longstoryshort-backend-dark](https://github.com/user-attachments/assets/a967d08b-be33-489a-8c04-1a9ddebca529)
 
-```sh
-npm run lint
-```
+## Potential Enhancements
+- Add logo & change favicon
+- Make proxy API request to a separate backend for better security by not exposing the real API endpoint
