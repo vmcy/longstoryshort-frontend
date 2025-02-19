@@ -54,7 +54,7 @@ async function copyToClipboard() {
 
 <template>
   <div class="container">
-    <h1 class="title">URL Shortener</h1>
+    <h1 class="title">LSS - URL Shortener</h1>
     <form @submit.prevent="submitForm">
       <input
         v-model="inputUrl"
