@@ -1,9 +1,9 @@
 <script setup>
-import TheWelcome from '../components/TheWelcome.vue'
+import UrlShortener from '.././components/UrlShortener.vue'
 </script>
 
 <template>
   <main>
-    <TheWelcome />
+    <UrlShortener />
   </main>
 </template>
