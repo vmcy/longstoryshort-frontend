@@ -1,6 +1,7 @@
 <script setup>
 import { ref, watch } from 'vue'
 import { authService } from '@/services/authService'
+import { isValidURL } from '@/utils/helpers'
 
 const inputUrl = ref('')
 const errorMessage = ref('')
@@ -18,16 +19,6 @@ watch(inputUrl, (newVal) => {
     errorMessage.value = ''
   }
 })
-
-function isValidURL(url) {
-  const pattern = new RegExp(
-    '^(https?:\\/\\/)?' + // protocol
-      '((([a-zA-Z0-9-]+)\\.)+[a-zA-Z]{2,})' + // domain name
-      '(\\/[a-zA-Z0-9@:%._\\+~#?&//=]*)?$', // path
-    'i',
-  )
-  return pattern.test(url)
-}
 
 async function submitForm() {
   let trimmedUrl = inputUrl.value.trim()
