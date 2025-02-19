@@ -5,6 +5,7 @@ const inputUrl = ref('')
 const errorMessage = ref('')
 const resultMessage = ref('')
 const toastMessage = ref('')
+const isLoading = ref(false)
 
 // Watch the input and update error message immediately
 watch(inputUrl, (newVal) => {
@@ -27,14 +28,49 @@ function isValidURL(url) {
   return pattern.test(url)
 }
 
-function submitForm() {
-  const trimmedUrl = inputUrl.value.trim()
+async function submitForm() {
+  let trimmedUrl = inputUrl.value.trim()
+
   if (!trimmedUrl || !isValidURL(trimmedUrl)) {
     errorMessage.value = 'Please enter a valid URL'
     resultMessage.value = ''
-  } else {
-    errorMessage.value = ''
-    resultMessage.value = 'Shortened URL: https://short.url/abcd1234'
+    return
+  }
+
+  // Make sure the url has http / https, else we assume it is https
+  if (!trimmedUrl.startsWith('http://') && !trimmedUrl.startsWith('https://')) {
+    trimmedUrl = 'https://' + trimmedUrl
+  }
+
+  errorMessage.value = ''
+  isLoading.value = true
+
+  try {
+    // POST the URL to your API endpoint
+    const response = await fetch(
+      'https://x5l7dwxwyg.execute-api.ap-southeast-1.amazonaws.com/Prod/surl',
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ url: trimmedUrl }),
+      },
+    )
+
+    if (!response.status == 200) {
+      errorMessage.value = 'Failed to shorten URL, please try again.'
+      throw new Error('Network response was not ok')
+    }
+
+    const result = await response.json()
+    resultMessage.value = result.data.shortUrl
+  } catch (err) {
+    errorMessage.value = 'Unexpected error, please contact us.'
+    console.error('Error:', err)
+    // enhancement: auto error logging to analytic dashboard
+  } finally {
+    isLoading.value = false
   }
 }
 
@@ -66,7 +102,10 @@ async function copyToClipboard() {
       <div class="error-label" :class="{ 'error-active': errorMessage }">
         {{ errorMessage }}
       </div>
-      <button class="submit-button" type="submit">Shorten URL</button>
+      <button class="submit-button" type="submit" :disabled="isLoading">
+        <span v-if="!isLoading">Shorten URL</span>
+        <div v-else class="spinner"></div>
+      </button>
     </form>
     <div class="result-box" :class="{ 'result-active': resultMessage }">
       {{ resultMessage }}
@@ -164,11 +203,37 @@ input:focus {
   border-radius: 5px;
   cursor: pointer;
   transition: background-color 0.3s;
-  font-weight: bold;
+  border: none;
 }
 
-.submit-button:hover {
+.submit-button:disabled {
+  background-color: #3498db;
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.submit-button:hover:not(:disabled) {
   background-color: #2980b9;
+}
+
+/* Spinner styling for the loading state */
+.spinner {
+  border: 2px solid rgba(255, 255, 255, 0.6);
+  border-top: 2px solid #ffffff;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  animation: spin 1s linear infinite;
+  margin: 0 auto;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 /* Base result box styling */
