@@ -1,6 +1,7 @@
 <script>
 import { onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import { authService } from '@/services/authService'
 
 export default {
   setup() {
@@ -11,9 +12,18 @@ export default {
       const shortUrlId = route.params.shortid
 
       try {
+        const accessToken = await authService.getAccessToken()
+
         const response = await fetch(
-          `https://x5l7dwxwyg.execute-api.ap-southeast-1.amazonaws.com/Prod/eurl?shortid=${shortUrlId}`,
+          `https://s3m1djw81m.execute-api.ap-southeast-1.amazonaws.com/Prod/eurl?shortid=${shortUrlId}`,
+          {
+            method: 'GET',
+            headers: {
+              Authorization: accessToken,
+            },
+          },
         )
+
         if (!response.ok) {
           router.push('/')
           throw new Error(`HTTP error! status: ${response.status}`)
@@ -27,6 +37,7 @@ export default {
           router.push('/')
         }
       } catch (error) {
+        router.push('/')
         console.error('Error fetching data:', error)
       }
     })

@@ -1,5 +1,6 @@
 <script setup>
 import { ref, watch } from 'vue'
+import { authService } from '@/services/authService'
 
 const inputUrl = ref('')
 const errorMessage = ref('')
@@ -46,12 +47,14 @@ async function submitForm() {
   isLoading.value = true
 
   try {
-    // POST the URL to your API endpoint
+    const accessToken = await authService.getAccessToken()
+
     const response = await fetch(
-      'https://x5l7dwxwyg.execute-api.ap-southeast-1.amazonaws.com/Prod/surl',
+      'https://s3m1djw81m.execute-api.ap-southeast-1.amazonaws.com/Prod/surl',
       {
         method: 'POST',
         headers: {
+          Authorization: accessToken,
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ url: trimmedUrl }),
@@ -91,7 +94,7 @@ async function copyToClipboard() {
 <template>
   <div class="container">
     <h1 class="title">LSS - URL Shortener</h1>
-    <form @submit.prevent="submitForm">
+    <form @submit.prevent="submitForm" novalidate>
       <input
         v-model="inputUrl"
         type="url"
