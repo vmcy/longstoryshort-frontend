@@ -18,8 +18,8 @@ export const authService = {
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
         body: new URLSearchParams({
           grant_type: 'client_credentials',
-          client_id: '690lj2ek627eauqk895fsk2366',
-          client_secret: 'h80tp6h11235orempk32gp807iq5kn0busfqtqcr3n1qtomq58a',
+          client_id: '',
+          client_secret: '',
           scope: 'longstoryshort-identifier/write longstoryshort-identifier/read',
         }),
       },
